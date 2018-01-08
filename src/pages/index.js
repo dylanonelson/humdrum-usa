@@ -1,15 +1,32 @@
 import React from 'react'
 import Link from 'gatsby-link'
 
-import styled from 'styled-components';
-
-const Main = styled.main`
-  background: #ccc;
-`;
-
-const IndexPage = () => (
-  <Main>
-  </Main>
+export default ({ data }) => (
+  <main>
+    <ul>
+      {data.allMarkdownRemark.edges.map(({ node }) => (
+        <li><Link to={node.fields.slug}>{node.frontmatter.title}</Link></li>
+      ))}
+    </ul>
+  </main>
 )
 
-export default IndexPage
+export const query = graphql`
+  query IndexQuery {
+    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
+      totalCount
+      edges {
+        node {
+          id
+          frontmatter {
+            title
+            date(formatString: "DD MMMM, YYYY")
+          }
+          fields {
+            slug
+          }
+        }
+      }
+    }
+  }
+`
